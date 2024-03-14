@@ -1,6 +1,6 @@
 {
   "name": "ts-spring-decorators",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "keywords": [],
   "types": "./dist/index.d.ts",
   "main": "./dist/index.js",
@@ -14,7 +14,7 @@
     "generate-types": "cti entrypoint -n ./src -o index.ts",
     "clean": "rimraf dist",
     "test": "jest",
-    "deploy": "yarn test && yarn build && npm publish"
+    "deploy": "yarn test && yarn build && yarn publish"
   },
   "dependencies": {
     "reflect-metadata": "^0.2.1"
