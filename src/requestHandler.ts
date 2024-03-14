@@ -58,12 +58,12 @@ export const handleRequest = async (request: Request, target: any) => {
     prototype,
     methodName
   );
-  const requestParameterParam: Record<string, KeyData> = Reflect.getOwnMetadata(
+  const requestParameterParam: Record<string, KeyData> | undefined = Reflect.getOwnMetadata(
     requestParameterKey,
     prototype,
     methodName
   );
-  const headerParam: Record<string, KeyData> = Reflect.getOwnMetadata(
+  const headerParam: Record<string, KeyData> | undefined = Reflect.getOwnMetadata(
     headerKey,
     prototype,
     methodName
@@ -93,13 +93,16 @@ export const handleRequest = async (request: Request, target: any) => {
  * @param args The current state of the argument array
  */
 const joinMapParameters = (
-  keyData: Record<string, KeyData>,
+  keyData: Record<string, KeyData> | undefined,
   data: Record<string, any> | undefined,
   args: any[]
 ) => {
   if (!data) {
     //# TODO - Test for this
-    console.warn('Keydata exists, but there is no data to parse!');
+    console.warn('No data to map to key data');
+    return;
+  }
+  if (!keyData) {
     return;
   }
   Object.keys(keyData).forEach((value) => {

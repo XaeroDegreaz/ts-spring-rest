@@ -57,6 +57,20 @@ export class DecoratorClass {
     return this;
   }
 
+  @PostMapping({ path: '/test/post-no-headers-no-request-params' })
+  postMappingNoHeadersNoPostParams(
+    nothing: string,
+    @RequestBody requestBody: Pojo,
+    @Headers headers: Record<string, string>,
+    @RequestParameters requestParameters: Record<string, string>
+  ) {
+    this.requestBody = requestBody;
+    this.nothing = nothing;
+    this.headers = headers;
+    this.requestParameters = requestParameters;
+    return this;
+  }
+
   @GetMapping({ path: '/test/get' })
   getMapping(
     @Headers headers: Record<string, string>,
@@ -113,6 +127,44 @@ describe('run controller tests', () => {
     expect(controller.param1).toEqual('value1');
     expect(controller.param2).toEqual(2);
     expect(controller.param3).toEqual(true);
+    expect(controller.nothing).toBeUndefined();
+    //# TODO -- figure out a good way to do path parameters
+  });
+
+  test('post no headers or request params happy path', () => {
+    const controller = new DecoratorClass();
+    handleRequest(
+      {
+        method: 'POST',
+        path: '/test/post-no-headers-no-request-params',
+        body: '{"str": "test string", "int": 9001}',
+        headers: {
+          'post_content-type': 'application/json',
+          'post_test-number-header': '15',
+        },
+        requestParameters: {
+          post_param1: 'value1',
+          post_param2: '2',
+          post_param3: 'true',
+        },
+      },
+      controller
+    );
+    expect(controller.requestBody).toEqual({ str: 'test string', int: 9001 });
+    expect(controller.headers).toEqual({
+      'post_content-type': 'application/json',
+      'post_test-number-header': '15',
+    });
+    expect(controller.contentType).toBeUndefined();
+    expect(controller.testNumberHeader).toBeUndefined();
+    expect(controller.requestParameters).toEqual({
+      post_param1: 'value1',
+      post_param2: '2',
+      post_param3: 'true',
+    });
+    expect(controller.param1).toBeUndefined();
+    expect(controller.param2).toBeUndefined();
+    expect(controller.param3).toBeUndefined();
     expect(controller.nothing).toBeUndefined();
     //# TODO -- figure out a good way to do path parameters
   });
