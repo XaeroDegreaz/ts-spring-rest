@@ -105,7 +105,7 @@ export abstract class Handler {
 }
 
 export class AwsLambdaHandler extends Handler {
-  async handle( request: APIGatewayProxyEvent, controller: Function ): Promise<APIGatewayProxyResult>
+  async handle( request: APIGatewayProxyEvent, controller: any ): Promise<APIGatewayProxyResult>
   {
     const result = await handlePayload( {
       method: request.httpMethod,
@@ -113,7 +113,7 @@ export class AwsLambdaHandler extends Handler {
       path: request.path,
       headers: request.headers as Record<string, string>,
       requestParameters: request.queryStringParameters as Record<string, string>
-    }, this.iocContainerGetMethod?.( controller ) || Object.create( controller.prototype ) )
+    }, this.iocContainerGetMethod?.( controller ) || controller )
     return {
       body: JSON.stringify( result ),
       statusCode: 200

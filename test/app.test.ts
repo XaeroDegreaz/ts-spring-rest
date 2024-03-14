@@ -1,6 +1,6 @@
 import "reflect-metadata"
 import {APIGatewayProxyEvent} from "aws-lambda";
-import {Container} from "typescript-ioc";
+import {Container, Singleton} from "typescript-ioc";
 import {handlePayload, Handler} from "../src/app";
 import {GetMapping, PostMapping} from "../src/decorators/PostMapping";
 import {Headers} from "../src/decorators/Headers";
@@ -15,6 +15,7 @@ class Pojo {
   num: number
 }
 
+@Singleton
 class DecoratorClass {
   requestBody: Pojo
   nothing: string
@@ -53,6 +54,7 @@ class DecoratorClass {
     this.param3 = param3;
     this.contentType = contentType;
     this.testNumberHeader = testNumberHeader;
+    return this;
   }
 
   @GetMapping( {path: "/test/get"} )
@@ -73,7 +75,7 @@ class DecoratorClass {
     this.param3 = param3;
     this.contentType = contentType;
     this.testNumberHeader = testNumberHeader;
-    return "sweet!"
+    return this;
   }
 }
 
@@ -149,10 +151,42 @@ describe( "run controller tests", () => {
       headers: {"get_content-type": "application/json", "get_test-number-header": "15"},
       queryStringParameters: {"get_param1": "value1", "get_param2": "2", "get_param3": "true"},
     }
+    const controller = Container.get(DecoratorClass);
     const output = await Handler
       .initWithAwsLambda()
       .withIocContainerGetMethod( Container.get )
       .handle( event, DecoratorClass )
+    expect( controller.headers ).toEqual( {"get_content-type": "application/json", "get_test-number-header": "15"} )
+    expect( controller.contentType ).toEqual( "application/json" )
+    expect( controller.testNumberHeader ).toEqual( 15 )
+    expect( controller.requestParameters ).toEqual( {get_param1: "value1", get_param2: "2", get_param3: "true"} )
+    expect( controller.param1 ).toEqual( "value1" )
+    expect( controller.param2 ).toEqual( 2 )
+    expect( controller.param3 ).toEqual( true )
+    expect( controller.nothing ).toBeUndefined()
     console.log( {output} )
+  } )
+
+  test( "aws handler without ioc container", async () => {
+    const event: APIGatewayProxyEvent = {
+      ...awsEvent,
+      httpMethod: "GET",
+      path: "/test/get",
+      body: '{"str": "test string", "int": 9001}',
+      headers: {"get_content-type": "application/json", "get_test-number-header": "15"},
+      queryStringParameters: {"get_param1": "value1", "get_param2": "2", "get_param3": "true"},
+    }
+    const controller = new DecoratorClass()
+    await Handler
+      .initWithAwsLambda()
+      .handle( event, controller )
+    expect( controller.headers ).toEqual( {"get_content-type": "application/json", "get_test-number-header": "15"} )
+    expect( controller.contentType ).toEqual( "application/json" )
+    expect( controller.testNumberHeader ).toEqual( 15 )
+    expect( controller.requestParameters ).toEqual( {get_param1: "value1", get_param2: "2", get_param3: "true"} )
+    expect( controller.param1 ).toEqual( "value1" )
+    expect( controller.param2 ).toEqual( 2 )
+    expect( controller.param3 ).toEqual( true )
+    expect( controller.nothing ).toBeUndefined()
   } )
 } )
