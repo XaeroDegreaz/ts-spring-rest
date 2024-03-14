@@ -1,11 +1,14 @@
 import "reflect-metadata"
-import {handlePayload} from "../src/app";
+import {APIGatewayProxyEvent} from "aws-lambda";
+import {Container} from "typescript-ioc";
+import {handlePayload, Handler} from "../src/app";
 import {GetMapping, PostMapping} from "../src/decorators/PostMapping";
 import {Headers} from "../src/decorators/Headers";
 import {RequestBody} from "../src/decorators/RequestBody";
 import {RequestParameters} from "../src/decorators/RequestParameters";
 import {RequestParameter} from "../src/decorators/RequestParameter";
 import {Header} from "../src/decorators/Header";
+import * as awsEvent from "./awsEvent.json"
 
 class Pojo {
   str: string
@@ -23,6 +26,11 @@ class DecoratorClass {
   contentType: string;
   testNumberHeader: number;
   requestMappingTree: object
+
+  constructor()
+  {
+    console.log( "DecoratorClass constructed" )
+  }
 
   @PostMapping( {path: "/test/post"} )
   postMapping(
@@ -65,6 +73,7 @@ class DecoratorClass {
     this.param3 = param3;
     this.contentType = contentType;
     this.testNumberHeader = testNumberHeader;
+    return "sweet!"
   }
 }
 
@@ -75,8 +84,8 @@ describe( "run controller tests", () => {
       method: "POST",
       path: "/test/post",
       body: '{"str": "test string", "int": 9001}',
-      headers: '{"post_content-type": "application/json", "post_test-number-header": "15"}',
-      requestParameters: '{"post_param1": "value1", "post_param2":"2", "post_param3":"true"}',
+      headers: {"post_content-type": "application/json", "post_test-number-header": "15"},
+      requestParameters: {"post_param1": "value1", "post_param2": "2", "post_param3": "true"},
     }, controller )
     expect( controller.requestBody ).toEqual( {str: "test string", int: 9001} )
     expect( controller.headers ).toEqual( {"post_content-type": "application/json", "post_test-number-header": "15"} )
@@ -96,8 +105,8 @@ describe( "run controller tests", () => {
       method: "GET",
       path: "/test/post",
       body: '{"str": "test string", "int": 9001}',
-      headers: '{"post_content-type": "application/json", "test-number-header": "15"}',
-      requestParameters: '{"post_param1": "value1", "param2":"2", "post_param3":"true"}',
+      headers: {"post_content-type": "application/json", "test-number-header": "15"},
+      requestParameters: {"post_param1": "value1", "param2": "2", "post_param3": "true"},
     }, controller )
     expect( controller.requestBody ).toBeUndefined()
     expect( controller.headers ).toBeUndefined()
@@ -117,8 +126,8 @@ describe( "run controller tests", () => {
       method: "GET",
       path: "/test/get",
       body: '{"str": "test string", "int": 9001}',
-      headers: '{"get_content-type": "application/json", "get_test-number-header": "15"}',
-      requestParameters: '{"get_param1": "value1", "get_param2":"2", "get_param3":"true"}',
+      headers: {"get_content-type": "application/json", "get_test-number-header": "15"},
+      requestParameters: {"get_param1": "value1", "get_param2": "2", "get_param3": "true"},
     }, controller )
     expect( controller.headers ).toEqual( {"get_content-type": "application/json", "get_test-number-header": "15"} )
     expect( controller.contentType ).toEqual( "application/json" )
@@ -129,5 +138,21 @@ describe( "run controller tests", () => {
     expect( controller.param3 ).toEqual( true )
     expect( controller.nothing ).toBeUndefined()
     //# TODO -- figure out a good way to do path parameters
+  } )
+
+  test( "aws handler with ioc container", async () => {
+    const event: APIGatewayProxyEvent = {
+      ...awsEvent,
+      httpMethod: "GET",
+      path: "/test/get",
+      body: '{"str": "test string", "int": 9001}',
+      headers: {"get_content-type": "application/json", "get_test-number-header": "15"},
+      queryStringParameters: {"get_param1": "value1", "get_param2": "2", "get_param3": "true"},
+    }
+    const output = await Handler
+      .initWithAwsLambda()
+      .withIocContainerGetMethod( Container.get )
+      .handle( event, DecoratorClass )
+    console.log( {output} )
   } )
 } )
