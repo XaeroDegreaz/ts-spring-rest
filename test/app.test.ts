@@ -1,13 +1,14 @@
 import 'reflect-metadata';
 import { APIGatewayProxyEvent } from 'aws-lambda';
 import { Container, Singleton } from 'typescript-ioc';
-import { handlePayload, Handler } from '../src/app';
+import { handleRequest } from '../src/requestHandler';
 import { GetMapping, PostMapping } from '../src/decorators/PostMapping';
 import { Headers } from '../src/decorators/Headers';
 import { RequestBody } from '../src/decorators/RequestBody';
 import { RequestParameters } from '../src/decorators/RequestParameters';
 import { RequestParameter } from '../src/decorators/RequestParameter';
 import { Header } from '../src/decorators/Header';
+import { GenericHandler } from '../src/Handlers';
 import * as awsEvent from './awsEvent.json';
 
 class Pojo {
@@ -42,7 +43,7 @@ export class DecoratorClass {
     @RequestParameter('post_param2') param2: number,
     @RequestParameter('post_param3') param3: boolean,
     @Header('post_content-type') contentType: string,
-    @Header('post_test-number-header') testNumberHeader: number,
+    @Header('post_test-number-header') testNumberHeader: number
   ) {
     this.requestBody = requestBody;
     this.nothing = nothing;
@@ -64,7 +65,7 @@ export class DecoratorClass {
     @RequestParameter('get_param2') param2: number,
     @RequestParameter('get_param3') param3: boolean,
     @Header('get_content-type') contentType: string,
-    @Header('get_test-number-header') testNumberHeader: number,
+    @Header('get_test-number-header') testNumberHeader: number
   ) {
     this.headers = headers;
     this.requestParameters = requestParameters;
@@ -80,7 +81,7 @@ export class DecoratorClass {
 describe('run controller tests', () => {
   test('post happy path', () => {
     const controller = new DecoratorClass();
-    handlePayload(
+    handleRequest(
       {
         method: 'POST',
         path: '/test/post',
@@ -95,7 +96,7 @@ describe('run controller tests', () => {
           post_param3: 'true',
         },
       },
-      controller,
+      controller
     );
     expect(controller.requestBody).toEqual({ str: 'test string', int: 9001 });
     expect(controller.headers).toEqual({
@@ -118,7 +119,7 @@ describe('run controller tests', () => {
 
   test("ensure gets don't work on postmapping", () => {
     const controller = new DecoratorClass();
-    handlePayload(
+    handleRequest(
       {
         method: 'GET',
         path: '/test/post',
@@ -133,7 +134,7 @@ describe('run controller tests', () => {
           post_param3: 'true',
         },
       },
-      controller,
+      controller
     );
     expect(controller.requestBody).toBeUndefined();
     expect(controller.headers).toBeUndefined();
@@ -149,7 +150,7 @@ describe('run controller tests', () => {
 
   test('get happy path', () => {
     const controller = new DecoratorClass();
-    handlePayload(
+    handleRequest(
       {
         method: 'GET',
         path: '/test/get',
@@ -164,7 +165,7 @@ describe('run controller tests', () => {
           get_param3: 'true',
         },
       },
-      controller,
+      controller
     );
     expect(controller.headers).toEqual({
       'get_content-type': 'application/json',
@@ -201,7 +202,7 @@ describe('run controller tests', () => {
       },
     };
     const controller = Container.get(DecoratorClass);
-    await Handler.initWithAwsLambda()
+    await GenericHandler.initWithAwsLambda()
       .withIocContainerGetMethod(Container.get)
       .handle(event, DecoratorClass);
     expect(controller.headers).toEqual({
@@ -238,7 +239,7 @@ describe('run controller tests', () => {
       },
     };
     const controller = new DecoratorClass();
-    await Handler.initWithAwsLambda().handle(event, controller);
+    await GenericHandler.initWithAwsLambda().handle(event, controller);
     expect(controller.headers).toEqual({
       'get_content-type': 'application/json',
       'get_test-number-header': '15',

@@ -19,6 +19,8 @@
     "typescript-ioc": "^3.2.2"
   },
   "prettier": {
-    "singleQuote": true
+    "singleQuote": true,
+    "printWidth": 100,
+    "trailingComma": "es5"
   }
 }
