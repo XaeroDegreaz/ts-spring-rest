@@ -1,4 +1,10 @@
 {
+  "name": "ts-spring",
+  "version": "0.0.1",
+  "main": "index.js",
+  "keywords": [],
+  "author": "Jerome Doby",
+  "description": "Spring-like TypeScript decorators for NodeJS HTTP request mapping",
   "scripts": {
     "test": "jest"
   },
@@ -22,5 +28,12 @@
     "singleQuote": true,
     "printWidth": 100,
     "trailingComma": "es5"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/XaeroDegreaz/ts-spring.git"
+  },
+  "bugs": {
+    "url": "https://github.com/XaeroDegreaz/ts-spring/issues"
   }
 }
