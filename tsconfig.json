@@ -2,6 +2,7 @@
   "compilerOptions": {
     "target": "ES6",
     "esModuleInterop": true,
+    "moduleResolution": "NodeNext",
     "outDir": "dist",
     "forceConsistentCasingInFileNames": true,
     "strict": false,
@@ -14,6 +15,10 @@
     "emitDecoratorMetadata": true,
     "sourceMap": true,
     "inlineSourceMap": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "types": [
+      "reflect-metadata",
+      "jest"
+    ]
   }
 }
