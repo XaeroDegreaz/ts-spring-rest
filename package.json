@@ -1,11 +1,18 @@
 {
-  "name": "ts-spring",
-  "version": "0.0.1",
-  "main": "index.js",
+  "name": "ts-spring-decorators",
+  "version": "0.0.5",
   "keywords": [],
+  "types": "./dist/index.d.ts",
+  "main": "./dist/index.js",
+  "files": [
+    "dist"
+  ],
   "author": "Jerome Doby",
   "description": "Spring-like TypeScript decorators for NodeJS HTTP request mapping",
   "scripts": {
+    "build": "yarn clean && yarn generate-types && tsc",
+    "generate-types": "cti entrypoint -n ./src -o index.ts",
+    "clean": "rimraf dist",
     "test": "jest"
   },
   "dependencies": {
@@ -16,10 +23,13 @@
     "@types/jest": "^29.5.12",
     "@types/node": "^20.11.25",
     "aws-lambda": "^1.0.7",
+    "create-ts-index": "^1.14.0",
     "jest": "^29.7.0",
     "prettier": "^3.2.5",
+    "rimraf": "^5.0.5",
     "ts-jest": "^29.1.2",
     "ts-node": "^10.9.2",
+    "tsd": "^0.30.7",
     "tsyringe": "^4.8.0",
     "typescript": "^5.4.2",
     "typescript-ioc": "^3.2.2"

@@ -5,3 +5,4 @@ node_modules/
 .webpack/
 coverage/
 dist
+src/index.ts.bak
