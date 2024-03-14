@@ -1,6 +1,6 @@
 {
-  "name": "ts-spring-decorators",
-  "version": "0.0.8",
+  "name": "@xaerodegreaz/ts-spring-rest",
+  "version": "0.0.11",
   "keywords": [],
   "types": "./dist/index.d.ts",
   "main": "./dist/index.js",
@@ -14,7 +14,7 @@
     "generate-types": "cti entrypoint -n ./src -o index.ts",
     "clean": "rimraf dist",
     "test": "jest",
-    "deploy": "yarn test && yarn build && yarn publish"
+    "deploy": "yarn test && yarn build && yarn publish --access public"
   },
   "dependencies": {
     "reflect-metadata": "^0.2.1"
@@ -43,9 +43,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/XaeroDegreaz/ts-spring.git"
+    "url": "git+https://github.com/XaeroDegreaz/ts-spring.git"
   },
   "bugs": {
     "url": "https://github.com/XaeroDegreaz/ts-spring/issues"
-  }
+  },
+  "homepage": "https://github.com/XaeroDegreaz/ts-spring#readme"
 }
