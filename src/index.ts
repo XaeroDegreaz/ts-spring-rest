@@ -1,5 +1,6 @@
 // created from 'create-ts-index'
 
+export * from './decorators/ExceptionHandler';
 export * from './decorators/Header';
 export * from './decorators/Headers';
 export * from './decorators/PostMapping';

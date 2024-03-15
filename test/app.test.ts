@@ -9,7 +9,7 @@ import { RequestBody } from '../src';
 import { RequestParameters } from '../src';
 import { RequestParameter } from '../src';
 import { Header } from '../src';
-import { ErrorHandler } from '../src/decorators/ExceptionHandler';
+import { ErrorHandler } from '../src';
 import * as awsEvent from './awsEvent.json';
 
 class Pojo {
