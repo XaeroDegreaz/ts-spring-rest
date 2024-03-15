@@ -1,14 +1,14 @@
 import 'reflect-metadata';
 import { APIGatewayProxyEvent } from 'aws-lambda';
 import { Container, Singleton } from 'typescript-ioc';
-import { handleRequest } from '../src/requestHandler';
-import { GetMapping, PostMapping } from '../src/decorators/PostMapping';
-import { Headers } from '../src/decorators/Headers';
-import { RequestBody } from '../src/decorators/RequestBody';
-import { RequestParameters } from '../src/decorators/RequestParameters';
-import { RequestParameter } from '../src/decorators/RequestParameter';
-import { Header } from '../src/decorators/Header';
-import { GenericHandler } from '../src/Handlers';
+import { AwsLambdaHandler } from '../src';
+import { handleRequest } from '../src';
+import { GetMapping, PostMapping } from '../src';
+import { Headers } from '../src';
+import { RequestBody } from '../src';
+import { RequestParameters } from '../src';
+import { RequestParameter } from '../src';
+import { Header } from '../src';
 import * as awsEvent from './awsEvent.json';
 
 class Pojo {
@@ -28,10 +28,6 @@ export class DecoratorClass {
   contentType: string;
   testNumberHeader: number;
   requestMappingTree: object;
-
-  constructor() {
-    console.log('DecoratorClass constructed');
-  }
 
   @PostMapping({ path: '/test/post' })
   postMapping(
@@ -254,9 +250,9 @@ describe('run controller tests', () => {
       },
     };
     const controller = Container.get(DecoratorClass);
-    await GenericHandler.initWithAwsLambda()
+    await new AwsLambdaHandler(DecoratorClass)
       .withIocContainerGetMethod(Container.get)
-      .handle(event, DecoratorClass);
+      .handle(event);
     expect(controller.headers).toEqual({
       'get_content-type': 'application/json',
       'get_test-number-header': '15',
@@ -291,7 +287,7 @@ describe('run controller tests', () => {
       },
     };
     const controller = new DecoratorClass();
-    await GenericHandler.initWithAwsLambda().handle(event, controller);
+    await new AwsLambdaHandler(controller).handle(event);
     expect(controller.headers).toEqual({
       'get_content-type': 'application/json',
       'get_test-number-header': '15',
