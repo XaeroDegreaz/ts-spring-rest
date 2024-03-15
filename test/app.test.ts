@@ -9,12 +9,17 @@ import { RequestBody } from '../src';
 import { RequestParameters } from '../src';
 import { RequestParameter } from '../src';
 import { Header } from '../src';
+import { ErrorHandler } from '../src/decorators/ExceptionHandler';
 import * as awsEvent from './awsEvent.json';
 
 class Pojo {
   str: string;
   num: number;
 }
+
+class Error1 extends Error {}
+
+class Error2 extends Error {}
 
 @Singleton
 export class DecoratorClass {
@@ -86,12 +91,31 @@ export class DecoratorClass {
     this.testNumberHeader = testNumberHeader;
     return this;
   }
+
+  @PostMapping({ path: '/test/handle-error' })
+  @ErrorHandler({ errorType: [Error1], statusCode: 500 })
+  @ErrorHandler({ errorType: [Error2], statusCode: 400 })
+  handleError() {
+    console.log('handleError() - Test method invoked');
+    throw new Error2('This is a test error for Error2');
+  }
 }
 
 describe('run controller tests', () => {
-  test('post happy path', () => {
+  test('handle error', async () => {
     const controller = new DecoratorClass();
-    handleRequest(
+    const output = await new AwsLambdaHandler(controller).handle({
+      ...awsEvent,
+      httpMethod: 'POST',
+      path: '/test/handle-error',
+      body: null,
+    });
+    expect(output).toEqual({ body: 'This is a test error for Error2', statusCode: 400 });
+  });
+
+  test('post happy path', async () => {
+    const controller = new DecoratorClass();
+    await handleRequest(
       {
         method: 'POST',
         path: '/test/post',
@@ -127,9 +151,9 @@ describe('run controller tests', () => {
     //# TODO -- figure out a good way to do path parameters
   });
 
-  test('post no headers or request params happy path', () => {
+  test('post no headers or request params happy path', async () => {
     const controller = new DecoratorClass();
-    handleRequest(
+    await handleRequest(
       {
         method: 'POST',
         path: '/test/post-no-headers-no-request-params',
@@ -165,9 +189,9 @@ describe('run controller tests', () => {
     //# TODO -- figure out a good way to do path parameters
   });
 
-  test("ensure gets don't work on postmapping", () => {
+  test("ensure gets don't work on postmapping", async () => {
     const controller = new DecoratorClass();
-    handleRequest(
+    await handleRequest(
       {
         method: 'GET',
         path: '/test/post',
@@ -196,9 +220,9 @@ describe('run controller tests', () => {
     //# TODO -- figure out a good way to do path parameters
   });
 
-  test('get happy path', () => {
+  test('get happy path', async () => {
     const controller = new DecoratorClass();
-    handleRequest(
+    await handleRequest(
       {
         method: 'GET',
         path: '/test/get',

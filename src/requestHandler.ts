@@ -1,4 +1,5 @@
 import 'reflect-metadata';
+import { DecoratedMethodException } from './decorators/ExceptionHandler';
 import { headerKey } from './decorators/Header';
 import { headersKey } from './decorators/Headers';
 import {
@@ -81,7 +82,15 @@ export const handleRequest = async (request: Request, target: any) => {
   joinMapParameters(headerParam, requestHeaders, args);
 
   //# Call the function with the arguments
-  return await method.apply(target, args);
+  try {
+    const output = await method.apply(target, args);
+    if (output instanceof DecoratedMethodException) {
+      throw output;
+    }
+    return output;
+  } finally {
+    //# Nothing -- we don't wanna handle errors here.
+  }
 };
 
 /**
@@ -99,7 +108,6 @@ const joinMapParameters = (
 ) => {
   if (!data) {
     //# TODO - Test for this
-    console.warn('No data to map to key data');
     return;
   }
   if (!keyData) {
