@@ -1,5 +1,4 @@
 import 'reflect-metadata';
-import { DecoratedMethodException } from './decorators/ExceptionHandler';
 import { headerKey } from './decorators/Header';
 import { headersKey } from './decorators/Headers';
 import {
@@ -84,12 +83,15 @@ export const handleRequest = async (request: Request, target: any) => {
   //# Call the function with the arguments
   try {
     const output = await method.apply(target, args);
-    if (output instanceof DecoratedMethodException) {
+    //# @ErrorHandler will "return" an Error instead of throwing it inside the decorator.
+    //# Thrown errors there do not propagate inside user-code, so forcing the function
+    //# to return the error, and checking for it here to rethrow seems like the best solution.
+    if (output instanceof Error) {
       throw output;
     }
     return output;
   } finally {
-    //# Nothing -- we don't wanna handle errors here.
+    //# Nothing -- we don't wanna handle errors here. Let it bubble and get handled in a Handler method somewhere.
   }
 };
 

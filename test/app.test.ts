@@ -103,13 +103,14 @@ export class DecoratorClass {
 
 describe('run controller tests', () => {
   test('handle error', async () => {
-    const controller = new DecoratorClass();
-    const output = await new AwsLambdaHandler(controller).handle({
-      ...awsEvent,
-      httpMethod: 'POST',
-      path: '/test/handle-error',
-      body: null,
-    });
+    const output = await new AwsLambdaHandler(DecoratorClass)
+      .withIocContainerGetMethod(Container.get)
+      .handle({
+        ...awsEvent,
+        httpMethod: 'POST',
+        path: '/test/handle-error',
+        body: null,
+      });
     expect(output).toEqual({ body: 'This is a test error for Error2', statusCode: 400 });
   });
 

@@ -10,7 +10,8 @@ import { handleRequest } from '../requestHandler';
 export class AwsLambdaHandler extends Handler {
   async handle(
     request: APIGatewayProxyEvent,
-    bubbleExceptions = false
+    bubbleExceptions = false,
+    logExceptions = true
   ): Promise<APIGatewayProxyResult> {
     try {
       const result = await handleRequest(
@@ -28,12 +29,18 @@ export class AwsLambdaHandler extends Handler {
         statusCode: 200, //# make this dynamically grabbed from the handler
       };
     } catch (e) {
+      logExceptions
+        ? e instanceof DecoratedMethodException
+          ? console.error(e.e)
+          : console.error(e)
+        : undefined;
       if (bubbleExceptions) {
-        console.error(e);
+        if (e instanceof DecoratedMethodException) {
+          throw e.e;
+        }
         throw e;
       } else {
         if (e instanceof DecoratedMethodException) {
-          console.error(e.e);
           return {
             body: e.message,
             statusCode: e.statusCode,
