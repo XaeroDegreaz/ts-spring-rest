@@ -1,14 +1,11 @@
 import 'reflect-metadata';
 import { headerKey } from './decorators/Header';
 import { headersKey } from './decorators/Headers';
-import {
-  requestMappingKey,
-  requestMappingTree,
-  RequestMappingTree,
-} from './decorators/PostMapping';
+import { requestMappingKey, requestMappingTree, RequestMappingTree } from './decorators/PostMapping';
 import { requestBodyKey } from './decorators/RequestBody';
 import { requestParameterKey } from './decorators/RequestParameter';
 import { requestParametersKey } from './decorators/RequestParameters';
+import { DecoratedMethodException } from './decorators/ExceptionHandler';
 
 /**
  * HTTP request information
@@ -44,8 +41,10 @@ export const handleRequest = async (request: Request, target: any) => {
   );
   const foundPath = mappings?.[request.method]?.[request.path];
   if (!foundPath) {
-    console.log('Path not registered');
-    return; //404
+    throw new DecoratedMethodException(
+      new Error(`Path '${request.method} => ${request.path}' not registered.`),
+      404
+    );
   }
   const { method, methodName } = foundPath;
 
