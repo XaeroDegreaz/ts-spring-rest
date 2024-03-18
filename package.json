@@ -45,10 +45,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/XaeroDegreaz/ts-spring.git"
+    "url": "git+https://github.com/XaeroDegreaz/ts-spring-rest.git"
   },
   "bugs": {
-    "url": "https://github.com/XaeroDegreaz/ts-spring/issues"
+    "url": "https://github.com/XaeroDegreaz/ts-spring-rest/issues"
   },
-  "homepage": "https://github.com/XaeroDegreaz/ts-spring#readme"
+  "homepage": "https://github.com/XaeroDegreaz/ts-spring-rest#readme"
 }
