@@ -1,6 +1,6 @@
 {
   "name": "@xaerodegreaz/ts-spring-rest",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "keywords": [],
   "types": "./dist/index.d.ts",
   "main": "./dist/index.js",
