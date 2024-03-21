@@ -14,7 +14,7 @@
     "build": "yarn clean && yarn generate-types && tsc",
     "generate-types": "cti entrypoint -n ./src -o index.ts",
     "clean": "rimraf dist",
-    "test": "jest --coverage && coveralls < coverage/lcov.info",
+    "test": "jest",
     "deploy": "yarn test && yarn build && yarn publish --access public"
   },
   "dependencies": {
