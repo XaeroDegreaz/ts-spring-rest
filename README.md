@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/xaerodegreaz/ts-spring-rest.svg?branch=master)](https://travis-ci.com/xaerodegreaz/ts-spring-rest)
+[![Build Status](https://api.travis-ci.com/xaerodegreaz/ts-spring-rest.svg?branch=master)](https://app.travis-ci.com/xaerodegreaz/ts-spring-rest)
 [![Coverage Status](https://coveralls.io/repos/github/XaeroDegreaz/ts-spring-rest/badge.svg?branch=master)](https://coveralls.io/github/XaeroDegreaz/ts-spring-rest?branch=master)
 # Request Handling in TypeScript
 
