@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.com/xaerodegreaz/ts-spring-rest.svg?branch=master)](https://travis-ci.com/xaerodegreaz/ts-spring-rest)
-[![Coverage Status](https://coveralls.io/repos/github/xaerodegreaz/ts-spring-rest/badge.svg?branch=main)](https://coveralls.io/github/xaerodegreaz/ts-spring-rest?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/xaerodegreaz/ts-spring-rest/badge.svg?branch=master)](https://coveralls.io/github/xaerodegreaz/ts-spring-rest?branch=master)
 # Request Handling in TypeScript
 
 This README provides instructions on how to use various decorators, Handler implementations, and the `handleRequest` function in TypeScript to handle HTTP requests effectively.
