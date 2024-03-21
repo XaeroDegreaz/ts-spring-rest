@@ -1,6 +1,6 @@
 import { Singleton } from 'typescript-ioc';
 import {
-  ErrorHandler,
+  ExceptionHandler,
   GetMapping,
   Header,
   Headers,
@@ -91,8 +91,8 @@ export class TestController {
   }
 
   @PostMapping({ path: '/test/handle-error' })
-  @ErrorHandler({ errorType: [Error1], statusCode: 500 })
-  @ErrorHandler({ errorType: [Error2], statusCode: 400 })
+  @ExceptionHandler({ errorType: [Error1], statusCode: 500 })
+  @ExceptionHandler({ errorType: [Error2], statusCode: 400 })
   handleError() {
     console.debug('handleError() - Test method invoked');
     throw new Error2('This is a test error for Error2');

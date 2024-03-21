@@ -1,7 +1,6 @@
 interface Props {
   errorType: any[];
   statusCode: number;
-  message?: string;
 }
 
 export class DecoratedMethodException extends Error {
@@ -13,7 +12,7 @@ export class DecoratedMethodException extends Error {
   }
 }
 
-export const ErrorHandler = (props: Props) => {
+export const ExceptionHandler = ( props: Props) => {
   return (_prototype: any, _methodName: string, descriptor: PropertyDescriptor) => {
     const original = descriptor.value;
     descriptor.value = function (...args: any[]) {
