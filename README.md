@@ -141,7 +141,7 @@ export const lambdaHandler = async ( event: APIGatewayProxyEvent, context: any )
 };
 ```
 
-`Handler` implementations also gain access to the `withIocContainerGetMethod` that can can be used with IOC containers such as [tsyringe](https://www.npmjs.com/package/tsyringe), or [typescriot-ioc](https://www.npmjs.com/package/typescript-ioc) in order to construct your controller with its dependencies. Not IOC packages are included with this one, so refer to your vendor for documentation.
+`Handler` implementations also gain access to the `withIocContainerGetMethod` that can can be used with IOC containers such as [tsyringe](https://www.npmjs.com/package/tsyringe), or [typescriot-ioc](https://www.npmjs.com/package/typescript-ioc) in order to construct your controller with its dependencies. No IOC packages are included with this one, so refer to your vendor for documentation.
 
 ```typescript
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
@@ -149,24 +149,27 @@ import { Container } from 'typescript-ioc';
 import { AwsLambdaHandler } from '@xaerodegreaz/ts-spring-rest';
 
 class YourControllerClass {
-  constructor(private readonly dependency1: Dependency1, private readonly dependency2: Dependency2)
-  {
-  }
+  constructor(
+    private readonly dependency1: Dependency1, 
+    private readonly dependency2: Dependency2){}
   
   @RequestMapping({path:'/example/get'})
-  handleGet(@RequestHeaders headers: Record<string, string>, @RequestParameter('someParam') someParam: int){
+  handleGet(
+    @RequestHeaders headers: Record<string, string>, 
+    @RequestParameter('someParam') someParam: int) {
     // handle your get
   }
 
   @PostMapping({path:'/example/post'})
-  handleGet(@RequestBody myRecord: MyRecord){
+  handleGet(@RequestBody myRecord: MyRecord) {
     // handle your post
   }
 }
 
 export const lambdaHandler = async ( event: APIGatewayProxyEvent, context: any ): Promise<APIGatewayProxyResult> => {
   // Using the typescript-ioc package for dependency injection
-  const handler = new AwsLambdaHandler( YourControllerClass ).withIocContainerGetMethod( Container.get );
+  const handler = new AwsLambdaHandler( YourControllerClass )
+    .withIocContainerGetMethod( Container.get );
   return await handler.handle( event );
 };
 ```
